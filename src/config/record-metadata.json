@@ -1,0 +1,604 @@
+{
+  "ApprenticeshipProgram": {
+    "name": "ApprenticeshipProgram",
+    "fields": [
+      {
+        "name": "name",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "registrationNumber",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "occupation",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "sponsor",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "startAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "completionHours",
+        "kind": "number",
+        "required": true,
+        "integer": true,
+        "min": 0
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      }
+    ]
+  },
+  "Apprentice": {
+    "name": "Apprentice",
+    "fields": [
+      {
+        "name": "name",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeNumber",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "employer",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "startedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "mentor",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "targetEndAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeshipProgramId",
+        "kind": "string",
+        "required": true,
+        "relation": "ApprenticeshipProgram"
+      }
+    ],
+    "parent": {
+      "entity": "ApprenticeshipProgram",
+      "field": "apprenticeshipProgramId"
+    }
+  },
+  "WorkProcess": {
+    "name": "WorkProcess",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "code",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "requiredHours",
+        "kind": "number",
+        "required": true,
+        "min": 0
+      },
+      {
+        "name": "description",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "sequence",
+        "kind": "number",
+        "required": true,
+        "integer": true,
+        "min": 0
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeshipProgramId",
+        "kind": "string",
+        "required": true,
+        "relation": "ApprenticeshipProgram"
+      }
+    ],
+    "parent": {
+      "entity": "ApprenticeshipProgram",
+      "field": "apprenticeshipProgramId"
+    }
+  },
+  "WorkHourEntry": {
+    "name": "WorkHourEntry",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeId",
+        "kind": "string",
+        "required": true,
+        "relation": "Apprentice"
+      },
+      {
+        "name": "workProcessId",
+        "kind": "string",
+        "required": true,
+        "relation": "WorkProcess"
+      },
+      {
+        "name": "workedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "hours",
+        "kind": "number",
+        "required": true,
+        "min": 0
+      },
+      {
+        "name": "supervisor",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeshipProgramId",
+        "kind": "string",
+        "required": true,
+        "relation": "ApprenticeshipProgram"
+      }
+    ],
+    "parent": {
+      "entity": "ApprenticeshipProgram",
+      "field": "apprenticeshipProgramId"
+    }
+  },
+  "InstructionCourse": {
+    "name": "InstructionCourse",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "provider",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "requiredHours",
+        "kind": "number",
+        "required": true,
+        "min": 0
+      },
+      {
+        "name": "topic",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "scheduledAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeshipProgramId",
+        "kind": "string",
+        "required": true,
+        "relation": "ApprenticeshipProgram"
+      }
+    ],
+    "parent": {
+      "entity": "ApprenticeshipProgram",
+      "field": "apprenticeshipProgramId"
+    }
+  },
+  "InstructionAttendance": {
+    "name": "InstructionAttendance",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeId",
+        "kind": "string",
+        "required": true,
+        "relation": "Apprentice"
+      },
+      {
+        "name": "instructionCourseId",
+        "kind": "string",
+        "required": true,
+        "relation": "InstructionCourse"
+      },
+      {
+        "name": "attendedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "hours",
+        "kind": "number",
+        "required": true,
+        "min": 0
+      },
+      {
+        "name": "evidence",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeshipProgramId",
+        "kind": "string",
+        "required": true,
+        "relation": "ApprenticeshipProgram"
+      }
+    ],
+    "parent": {
+      "entity": "ApprenticeshipProgram",
+      "field": "apprenticeshipProgramId"
+    }
+  },
+  "MentorAttestation": {
+    "name": "MentorAttestation",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeId",
+        "kind": "string",
+        "required": true,
+        "relation": "Apprentice"
+      },
+      {
+        "name": "mentor",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "competency",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "evidence",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "attestedAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeshipProgramId",
+        "kind": "string",
+        "required": true,
+        "relation": "ApprenticeshipProgram"
+      }
+    ],
+    "parent": {
+      "entity": "ApprenticeshipProgram",
+      "field": "apprenticeshipProgramId"
+    }
+  },
+  "WageStep": {
+    "name": "WageStep",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "hoursThreshold",
+        "kind": "number",
+        "required": true,
+        "min": 0
+      },
+      {
+        "name": "requiredRateCents",
+        "kind": "number",
+        "required": true,
+        "integer": true,
+        "min": 0
+      },
+      {
+        "name": "effectiveAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "agreementVersion",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeshipProgramId",
+        "kind": "string",
+        "required": true,
+        "relation": "ApprenticeshipProgram"
+      }
+    ],
+    "parent": {
+      "entity": "ApprenticeshipProgram",
+      "field": "apprenticeshipProgramId"
+    }
+  },
+  "CompletionPacket": {
+    "name": "CompletionPacket",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeId",
+        "kind": "string",
+        "required": true,
+        "relation": "Apprentice"
+      },
+      {
+        "name": "compiledAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "sponsorNotes",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "supportingEvidence",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "receipt",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeshipProgramId",
+        "kind": "string",
+        "required": true,
+        "relation": "ApprenticeshipProgram"
+      }
+    ],
+    "parent": {
+      "entity": "ApprenticeshipProgram",
+      "field": "apprenticeshipProgramId"
+    }
+  },
+  "OperationalTask": {
+    "name": "OperationalTask",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "owner",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "priority",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "startAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "dueAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "done",
+        "kind": "boolean",
+        "required": true
+      },
+      {
+        "name": "notes",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeshipProgramId",
+        "kind": "string",
+        "required": true,
+        "relation": "ApprenticeshipProgram"
+      }
+    ],
+    "parent": {
+      "entity": "ApprenticeshipProgram",
+      "field": "apprenticeshipProgramId"
+    }
+  },
+  "RuleVersion": {
+    "name": "RuleVersion",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "jurisdiction",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "version",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "effectiveAt",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "expiresAt",
+        "kind": "date",
+        "required": false
+      },
+      {
+        "name": "sourceUrl",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "requirementText",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeshipProgramId",
+        "kind": "string",
+        "required": true,
+        "relation": "ApprenticeshipProgram"
+      }
+    ],
+    "parent": {
+      "entity": "ApprenticeshipProgram",
+      "field": "apprenticeshipProgramId"
+    }
+  },
+  "DocumentRequirement": {
+    "name": "DocumentRequirement",
+    "fields": [
+      {
+        "name": "title",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "category",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "requiredBy",
+        "kind": "date",
+        "required": true
+      },
+      {
+        "name": "sourceReference",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "evidenceReference",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "reviewNotes",
+        "kind": "string",
+        "required": false
+      },
+      {
+        "name": "status",
+        "kind": "string",
+        "required": true
+      },
+      {
+        "name": "apprenticeshipProgramId",
+        "kind": "string",
+        "required": true,
+        "relation": "ApprenticeshipProgram"
+      }
+    ],
+    "parent": {
+      "entity": "ApprenticeshipProgram",
+      "field": "apprenticeshipProgramId"
+    }
+  }
+}

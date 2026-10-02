@@ -1,0 +1,362 @@
+// Generated schema — modeled after beautyhqio conventions.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  active       Boolean @default(true)
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role     @default(ANALYST)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  ANALYST
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actorName String?
+  action    String
+  entity    String
+  entityId  String?
+  detail    String?
+  createdAt DateTime @default(now())
+}
+
+model WorkflowAnalysis {
+ id String @id @default(cuid())
+ actorId String
+ workflow String
+ subjectEntity String
+ subjectId String
+ input Json
+ evidence Json
+ evidenceHash String
+ result Json
+ model String
+ receipt String?
+ createdAt DateTime @default(now())
+ @@index([workflow, createdAt])
+}
+model RecordReview {
+ id String @id @default(cuid())
+ actorId String
+ entity String
+ entityId String
+ version String
+ reason String
+ createdAt DateTime @default(now())
+ @@unique([entity, entityId, version, actorId])
+}
+model UsageBucket {
+ id String @id
+ calls Int
+}
+model IssuedCredential {
+ token String @id
+ entity String
+ entityId String
+ version String
+ assertion Json
+ createdAt DateTime @default(now())
+ revokedAt DateTime?
+ @@index([entity, entityId, createdAt])
+}
+
+model DomainArtifact {
+ id String @id @default(cuid())
+ subjectEntity String
+ subjectId String
+ title String
+ content String
+ contentHash String
+ actorId String
+ approvedBy String?
+ createdAt DateTime @default(now())
+ @@index([subjectEntity, subjectId])
+}
+
+model RecordApproval {
+ id String @id
+ version String
+}
+model DomainExecution {
+ id String @id
+ actorId String
+ connectorId String
+ action String
+ subjectEntity String
+ subjectId String
+ version String
+ status String
+ result Json?
+ createdAt DateTime @default(now())
+}
+
+model WorkSession {
+ id String @id @default(cuid())
+ actorId String
+ respondentId String
+ subjectEntity String
+ subjectId String
+ questions Json
+ answers Json
+ currentQuestion String?
+ status String
+ deadline DateTime
+ createdAt DateTime @default(now())
+ @@index([respondentId, createdAt])
+}
+model SessionMedia {
+ id String @id @default(cuid())
+ sessionId String
+ questionId String
+ actorId String
+ contentType String
+ bytes Bytes
+ contentHash String
+ createdAt DateTime @default(now())
+ @@index([sessionId])
+}
+
+model AppSetting {
+ id String @id
+ value Json
+ updatedAt DateTime @updatedAt
+}
+
+model ApprenticeshipProgram {
+ id String @id @default(cuid())
+ name String
+ registrationNumber String
+ occupation String
+ sponsor String
+ startAt DateTime
+ completionHours Int
+ status String @default("Draft")
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ inverseApprentice_apprenticeshipProgramId Apprentice[] @relation("Apprentice_apprenticeshipProgramId")
+ inverseWorkProcess_apprenticeshipProgramId WorkProcess[] @relation("WorkProcess_apprenticeshipProgramId")
+ inverseWorkHourEntry_apprenticeshipProgramId WorkHourEntry[] @relation("WorkHourEntry_apprenticeshipProgramId")
+ inverseInstructionCourse_apprenticeshipProgramId InstructionCourse[] @relation("InstructionCourse_apprenticeshipProgramId")
+ inverseInstructionAttendance_apprenticeshipProgramId InstructionAttendance[] @relation("InstructionAttendance_apprenticeshipProgramId")
+ inverseMentorAttestation_apprenticeshipProgramId MentorAttestation[] @relation("MentorAttestation_apprenticeshipProgramId")
+ inverseWageStep_apprenticeshipProgramId WageStep[] @relation("WageStep_apprenticeshipProgramId")
+ inverseCompletionPacket_apprenticeshipProgramId CompletionPacket[] @relation("CompletionPacket_apprenticeshipProgramId")
+ inverseOperationalTask_apprenticeshipProgramId OperationalTask[] @relation("OperationalTask_apprenticeshipProgramId")
+ inverseRuleVersion_apprenticeshipProgramId RuleVersion[] @relation("RuleVersion_apprenticeshipProgramId")
+ inverseDocumentRequirement_apprenticeshipProgramId DocumentRequirement[] @relation("DocumentRequirement_apprenticeshipProgramId")
+}
+
+model Apprentice {
+ id String @id @default(cuid())
+ name String
+ apprenticeNumber String
+ employer String
+ startedAt DateTime
+ mentor String
+ targetEndAt DateTime
+ status String @default("Draft")
+ apprenticeshipProgramId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([apprenticeshipProgramId])
+ linkedApprenticeshipProgramId ApprenticeshipProgram @relation("Apprentice_apprenticeshipProgramId", fields: [apprenticeshipProgramId], references: [id], onDelete: Restrict)
+ inverseWorkHourEntry_apprenticeId WorkHourEntry[] @relation("WorkHourEntry_apprenticeId")
+ inverseInstructionAttendance_apprenticeId InstructionAttendance[] @relation("InstructionAttendance_apprenticeId")
+ inverseMentorAttestation_apprenticeId MentorAttestation[] @relation("MentorAttestation_apprenticeId")
+ inverseCompletionPacket_apprenticeId CompletionPacket[] @relation("CompletionPacket_apprenticeId")
+}
+
+model WorkProcess {
+ id String @id @default(cuid())
+ title String
+ code String
+ requiredHours Float
+ description String
+ sequence Int
+ status String @default("Draft")
+ apprenticeshipProgramId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([apprenticeshipProgramId])
+ linkedApprenticeshipProgramId ApprenticeshipProgram @relation("WorkProcess_apprenticeshipProgramId", fields: [apprenticeshipProgramId], references: [id], onDelete: Restrict)
+ inverseWorkHourEntry_workProcessId WorkHourEntry[] @relation("WorkHourEntry_workProcessId")
+}
+
+model WorkHourEntry {
+ id String @id @default(cuid())
+ title String
+ apprenticeId String
+ workProcessId String
+ workedAt DateTime
+ hours Float
+ supervisor String
+ status String @default("Draft")
+ apprenticeshipProgramId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([apprenticeshipProgramId])
+ linkedApprenticeId Apprentice @relation("WorkHourEntry_apprenticeId", fields: [apprenticeId], references: [id], onDelete: Restrict)
+ linkedWorkProcessId WorkProcess @relation("WorkHourEntry_workProcessId", fields: [workProcessId], references: [id], onDelete: Restrict)
+ linkedApprenticeshipProgramId ApprenticeshipProgram @relation("WorkHourEntry_apprenticeshipProgramId", fields: [apprenticeshipProgramId], references: [id], onDelete: Restrict)
+}
+
+model InstructionCourse {
+ id String @id @default(cuid())
+ title String
+ provider String
+ requiredHours Float
+ topic String
+ scheduledAt DateTime
+ status String @default("Draft")
+ apprenticeshipProgramId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([apprenticeshipProgramId])
+ linkedApprenticeshipProgramId ApprenticeshipProgram @relation("InstructionCourse_apprenticeshipProgramId", fields: [apprenticeshipProgramId], references: [id], onDelete: Restrict)
+ inverseInstructionAttendance_instructionCourseId InstructionAttendance[] @relation("InstructionAttendance_instructionCourseId")
+}
+
+model InstructionAttendance {
+ id String @id @default(cuid())
+ title String
+ apprenticeId String
+ instructionCourseId String
+ attendedAt DateTime
+ hours Float
+ evidence String
+ status String @default("Draft")
+ apprenticeshipProgramId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([apprenticeshipProgramId])
+ linkedApprenticeId Apprentice @relation("InstructionAttendance_apprenticeId", fields: [apprenticeId], references: [id], onDelete: Restrict)
+ linkedInstructionCourseId InstructionCourse @relation("InstructionAttendance_instructionCourseId", fields: [instructionCourseId], references: [id], onDelete: Restrict)
+ linkedApprenticeshipProgramId ApprenticeshipProgram @relation("InstructionAttendance_apprenticeshipProgramId", fields: [apprenticeshipProgramId], references: [id], onDelete: Restrict)
+}
+
+model MentorAttestation {
+ id String @id @default(cuid())
+ title String
+ apprenticeId String
+ mentor String
+ competency String
+ evidence String
+ attestedAt DateTime
+ status String @default("Draft")
+ apprenticeshipProgramId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([apprenticeshipProgramId])
+ linkedApprenticeId Apprentice @relation("MentorAttestation_apprenticeId", fields: [apprenticeId], references: [id], onDelete: Restrict)
+ linkedApprenticeshipProgramId ApprenticeshipProgram @relation("MentorAttestation_apprenticeshipProgramId", fields: [apprenticeshipProgramId], references: [id], onDelete: Restrict)
+}
+
+model WageStep {
+ id String @id @default(cuid())
+ title String
+ hoursThreshold Float
+ requiredRateCents Int
+ effectiveAt DateTime
+ agreementVersion String
+ status String @default("Draft")
+ apprenticeshipProgramId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([apprenticeshipProgramId])
+ linkedApprenticeshipProgramId ApprenticeshipProgram @relation("WageStep_apprenticeshipProgramId", fields: [apprenticeshipProgramId], references: [id], onDelete: Restrict)
+}
+
+model CompletionPacket {
+ id String @id @default(cuid())
+ title String
+ apprenticeId String
+ compiledAt DateTime
+ sponsorNotes String
+ supportingEvidence String
+ receipt String?
+ status String @default("Draft")
+ apprenticeshipProgramId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([apprenticeshipProgramId])
+ linkedApprenticeId Apprentice @relation("CompletionPacket_apprenticeId", fields: [apprenticeId], references: [id], onDelete: Restrict)
+ linkedApprenticeshipProgramId ApprenticeshipProgram @relation("CompletionPacket_apprenticeshipProgramId", fields: [apprenticeshipProgramId], references: [id], onDelete: Restrict)
+}
+
+model OperationalTask {
+ id String @id @default(cuid())
+ title String
+ owner String
+ priority String
+ startAt DateTime
+ dueAt DateTime
+ done Boolean
+ notes String?
+ status String @default("Draft")
+ apprenticeshipProgramId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([apprenticeshipProgramId])
+ linkedApprenticeshipProgramId ApprenticeshipProgram @relation("OperationalTask_apprenticeshipProgramId", fields: [apprenticeshipProgramId], references: [id], onDelete: Restrict)
+}
+
+model RuleVersion {
+ id String @id @default(cuid())
+ title String
+ jurisdiction String
+ version String
+ effectiveAt DateTime
+ expiresAt DateTime?
+ sourceUrl String
+ requirementText String
+ status String @default("Draft")
+ apprenticeshipProgramId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([apprenticeshipProgramId])
+ linkedApprenticeshipProgramId ApprenticeshipProgram @relation("RuleVersion_apprenticeshipProgramId", fields: [apprenticeshipProgramId], references: [id], onDelete: Restrict)
+}
+
+model DocumentRequirement {
+ id String @id @default(cuid())
+ title String
+ category String
+ requiredBy DateTime
+ sourceReference String
+ evidenceReference String?
+ reviewNotes String?
+ status String @default("Draft")
+ apprenticeshipProgramId String
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([createdAt])
+ @@index([apprenticeshipProgramId])
+ linkedApprenticeshipProgramId ApprenticeshipProgram @relation("DocumentRequirement_apprenticeshipProgramId", fields: [apprenticeshipProgramId], references: [id], onDelete: Restrict)
+}
